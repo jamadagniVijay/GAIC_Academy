@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <welcome-file-list>
+    <welcome-file>first.jsp</welcome-file>
+  </welcome-file-list>
+  <display-name>GAIC Academy</display-name>
+  <session-config>
+    <session-timeout>60</session-timeout>
+  </session-config>
+  <servlet>
+    <servlet-name>AcademyServiceServlet</servlet-name>
+    <servlet-class>com.academy.services.SessionClass</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AcademyServiceServlet</servlet-name>
+    <url-pattern>/first.jsp</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>test-servlet</servlet-name>
+		<servlet-class>
+			com.sun.jersey.spi.container.servlet.ServletContainer
+		</servlet-class>
+    <init-param>
+      <param-name>com.sun.jersey.config.property.packages</param-name>
+      <param-value>com.academy.services</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>test-servlet</servlet-name>
+    <url-pattern>/academyServices/*</url-pattern>
+  </servlet-mapping>
+  
+  <filter>
+    <filter-name>NtlmHttpFilter</filter-name>
+    <filter-class>jcifs.http.NtlmHttpFilter</filter-class>
+    <init-param>
+      <param-name>jcifs.http.domainController</param-name>
+      <param-value>10.139.11.48</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>NtlmHttpFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+</web-app>
