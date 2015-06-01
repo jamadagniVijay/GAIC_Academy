@@ -375,6 +375,7 @@ $(document).ready(function() {
 		var requestHref = $("a:eq(0)", this).attr('href');
 		var thisRowText = jQuery.makeArray($(this).parent().find('td'));
 		if (!(typeof requestHref == "undefined")) {
+			$(this).html('<span class="label label-warning">Requested</span>');
 			$.ajax({
 				type: "POST",
 				url: requestHref,
