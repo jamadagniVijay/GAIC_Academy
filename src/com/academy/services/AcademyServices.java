@@ -37,14 +37,16 @@ import org.json.simple.JSONObject;
 
 import com.academy.orm.DBConnection;
 import com.academy.orm.ResultSetConverter;
+import com.academy.test.LoggerExample;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.apache.log4j.Logger;
 
 
 @Path ("/myServices")
 public class AcademyServices {
 
-
+	final static Logger logger = Logger.getLogger(AcademyServices.class);
 	/*@Context 
 	private MessageContext context;*/
 
@@ -52,7 +54,7 @@ public class AcademyServices {
 	@Path("/getMyRequests/{empCode}")
 	public String getMyRequests (@PathParam(value = "empCode") int empCode) throws SQLException, JSONException
 	{
-		System.out.println("<!-------------my requested trainings------------->");
+		logger.debug("<!-------------my requested trainings------------->");
 		JSONArray arr = new JSONArray();
 
 		Connection connToComdB = new DBConnection().dbConnect( "com","com123");
@@ -61,7 +63,7 @@ public class AcademyServices {
 		proc.execute();
 
 		arr = new ResultSetConverter().convert(proc.getResultSet());
-		System.out.println(arr.toJSONString());
+		logger.debug(arr.toJSONString());
 
 		connToComdB.close();
 		return arr.toJSONString();
@@ -80,7 +82,7 @@ public class AcademyServices {
 		proc.execute();
 
 		arr = new ResultSetConverter().convert(proc.getResultSet());
-		System.out.println(arr.toJSONString());
+		logger.debug(arr.toJSONString());
 
 		connToComdB.close();
 		return arr.toJSONString();
@@ -123,7 +125,7 @@ public class AcademyServices {
 			//ResultSet countRes = stmt.executeQuery("select count(case when dbo.requests.isactive=0 then 1 end),  count(case when dbo.requests.isactive=1 then 1 end) from dbo.requests where dbo.requests.trainrefid=");
 			arr.add(obj);
 		}
-		System.out.println(arr.toJSONString());
+		logger.debug(arr.toJSONString());
 		connToComdB.close();
 		return arr.toJSONString();
 	}
@@ -140,7 +142,7 @@ public class AcademyServices {
 		proc.execute();
 
 		arr = new ResultSetConverter().convert(proc.getResultSet());
-		System.out.println(arr.toJSONString());
+		logger.debug(arr.toJSONString());
 
 		connToComdB.close();
 		return arr.toJSONString();
@@ -152,7 +154,7 @@ public class AcademyServices {
 	{
 		JSONArray arr = new JSONArray();
 		
-		System.out.println(trainId);
+		logger.debug(trainId);
 		
 		Connection connToComdB = new DBConnection().dbConnect( "com","com123");
 		CallableStatement proc = connToComdB.prepareCall("{ call dbo.upGetRequests(?) }");
@@ -160,7 +162,7 @@ public class AcademyServices {
 		proc.execute();
 
 		arr = new ResultSetConverter().convert(proc.getResultSet());
-		System.out.println(arr.toJSONString());
+		logger.debug(arr.toJSONString());
 
 		connToComdB.close();
 		return arr.toJSONString();
@@ -181,7 +183,7 @@ public class AcademyServices {
 			proc.setString(3, (String)servletRequest.getSession().getAttribute("userLogin"));
 			proc.execute();
 	
-			System.out.println("submitted for the empCode "+trainingId+" "+empCode);
+			logger.debug("submitted for the empCode "+trainingId+" "+empCode);
 			connToComdB.close();
 		//return arr.toJSONString();
 		}
@@ -189,7 +191,7 @@ public class AcademyServices {
 		{
 			return  "sesssionTimeOut";
 		}
-		/*System.out.println();
+		/*logger.debug();
 		return "submitted for the empCode "+empCode+" training id : "+trainingId;*/
 		return  "success";
 	}
@@ -198,7 +200,7 @@ public class AcademyServices {
 	@Path("/createThisTraining")
 	public String createThisTraining (@Context HttpServletRequest servletRequest,@QueryParam("txtCategory") String txtCategory, @QueryParam("txtTraining") String txtTraining,@QueryParam("txtCoordinators")String txtCoordinators) throws SQLException, JSONException
 	{	
-		System.out.println("inserted "+txtCategory+" "+txtTraining+" "+txtCoordinators);
+		logger.debug("inserted "+txtCategory+" "+txtTraining+" "+txtCoordinators);
 		String result =null;
 		if(servletRequest.getSession(false).getAttribute("userLogin")!=null)
 		{
@@ -236,7 +238,7 @@ public class AcademyServices {
 		proc.execute();
 
 		arr = new ResultSetConverter().convert(proc.getResultSet());
-		System.out.println(arr.toJSONString());
+		logger.debug(arr.toJSONString());
 
 		connToComdB.close();
 		return arr.toJSONString();
@@ -277,7 +279,7 @@ public class AcademyServices {
 
 				connToComdB.close();
 
-				System.out.println("edted the column name "+jsonObj.getString("sColumnTitle")+" with the TrainId "+jsonObj.getInt("TrainId")+" by "+currentEmployee +" from "+jsonObj.getString("initalCellValue")+" to "+jsonObj.getString("changedValue"));
+				logger.debug("edted the column name "+jsonObj.getString("sColumnTitle")+" with the TrainId "+jsonObj.getInt("TrainId")+" by "+currentEmployee +" from "+jsonObj.getString("initalCellValue")+" to "+jsonObj.getString("changedValue"));
 			}
 			return "success";
 		}
@@ -308,7 +310,7 @@ public class AcademyServices {
 			proc.execute();
 
 			connToComdB.close();
-			System.out.println("DELETED training with id "+jsonObj.getInt("TrainId"));
+			logger.debug("DELETED training with id "+jsonObj.getInt("TrainId"));
 			return "success";
 		}
 		else
@@ -332,7 +334,7 @@ public class AcademyServices {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
 		if(currentEmployee!=null && (jsonObj.getInt("TrainId")!=0))
 		{
-				System.out.println(jsonObj.length());
+				logger.debug(jsonObj.length());
 				Connection connToComdB = new DBConnection().dbConnect( "com","com123");
 				CallableStatement proc = connToComdB.prepareCall("{ call dbo.upManageSchedule(?,?,?,?) }");
 				
@@ -351,7 +353,7 @@ public class AcademyServices {
 				proc.execute();
 
 				connToComdB.close();
-				System.out.println("Modified training with id "+jsonObj.getInt("TrainId"));
+				logger.debug("Modified training with id "+jsonObj.getInt("TrainId"));
 
 			
 			return "success";
@@ -370,7 +372,7 @@ public class AcademyServices {
 	public String cancelMyRequests (@Context HttpServletRequest servletRequest, @PathParam(value="trainId") int trainId) throws SQLException, JSONException
 	{
 		String result = "";
-		System.out.println("started cancelling request");
+		logger.debug("started cancelling request");
 		if(servletRequest.getSession().getAttribute("userLogin")!=null)
 		{
 			int empCode = (Integer) servletRequest.getSession(false).getAttribute("empCode");
@@ -380,7 +382,7 @@ public class AcademyServices {
 			proc.setInt(2,trainId);
 			proc.execute();
 	
-			System.out.println("cancelled request "+trainId+" by"+empCode);
+			logger.debug("cancelled request "+trainId+" by"+empCode);
 			connToComdB.close();
 			return  "success";
 		//return arr.toJSONString();
@@ -389,7 +391,7 @@ public class AcademyServices {
 		{
 			return  "sesssionTimeOut";
 		}
-		/*System.out.println();
+		/*logger.debug();
 		return "submitted for the empCode "+empCode+" training id : "+trainingId;*/
 	}
 }
