@@ -18,7 +18,7 @@ $(document).ready(function() {
 	var createdTrainings = null;
 	var reqForTrain = null;
 	var getAllTrainings = null;
-	
+
 	var cancelTrainRequestId = null;
 	var trainingName = null;
 
@@ -129,27 +129,34 @@ $(document).ready(function() {
 
 		}
 	});
+	var isClicked  = false;
 	$('#myRequests').on('click', 'span', function(e) {
 		e.preventDefault();
-		console.log("this is the trainingId "+cancelTrainRequestId);
-		$.ajax({
-			type: 'get',
-			cache: false,
-			url: "academyServices/myServices/cancelMyRequestedTraining/"+cancelTrainRequestId,
-			success: function(data) {
-				//console.log(data);
-				if (data == "sesssionTimeOut") {
-					displaySessionTimeOut();
+		if(!isClicked)
+		{
 
-				} else {
-					displayToast("Cancelled : " + trainingName);
-					indexTable.ajax.reload();
-					myRequests.ajax.reload();
+			console.log("this is the trainingId "+cancelTrainRequestId);
+			$(this).prop('disabled', true);
+			$.ajax({
+				type: 'get',
+				cache: false,
+				url: "academyServices/myServices/cancelMyRequestedTraining/"+cancelTrainRequestId,
+				success: function(data) {
+					isClicked = true; 
+					//console.log(data);
+					if (data == "sesssionTimeOut") {
+						displaySessionTimeOut();
+
+					} else {
+						displayToast("Cancelled : " + trainingName);
+						indexTable.ajax.reload();
+						myRequests.ajax.reload();
+						isClicked = false;
+					}
 				}
-			}
-		});
-		
-		});
+			});
+		}
+	});
 	myActiveTrain = $('#myActiveTrain').DataTable({
 		"paging": false,
 		"bInfo": false,
@@ -464,22 +471,22 @@ $(document).ready(function() {
 				closeOnConfirm : false
 			}, function(isConfirm) {
 				if(isConfirm)
-					{
-						swal.disableButtons();
-						if (($('#startDate').val() === false)||($('#endDate').val() === false)) 
-							return false;
-						if (($('#startDate').val() === "")||($('#endDate').val() === "")) {
-							swal.showInputError("You need to write something!");    
-							return false   
-						}
-						
-						sentObject['StartDt'] = $('#startDate').val();
-						sentObject['EndDt'] = $('#endDate').val();
-						sentObject['isCancelled'] = 'false';
-						
-						manageSchedule(sentObject,canOrSec, thisRowText);
+				{
+					swal.disableButtons();
+					if (($('#startDate').val() === false)||($('#endDate').val() === false)) 
+						return false;
+					if (($('#startDate').val() === "")||($('#endDate').val() === "")) {
+						swal.showInputError("You need to write something!");    
+						return false   
 					}
-				
+
+					sentObject['StartDt'] = $('#startDate').val();
+					sentObject['EndDt'] = $('#endDate').val();
+					sentObject['isCancelled'] = 'false';
+
+					manageSchedule(sentObject,canOrSec, thisRowText);
+				}
+
 			});
 
 			break;
@@ -488,7 +495,7 @@ $(document).ready(function() {
 		break;
 		}
 		console.log(sentObject);
-		
+
 
 
 	});
